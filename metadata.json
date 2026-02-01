@@ -1,0 +1,8 @@
+{
+  "name": "Love_Love-Its_so_simple",
+  "description": "An ethical e-commerce platform for 'Love Love', focusing on spreading love and community over individualism. Featuring Printful-ready product showcases and an AI-powered customer care chat.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
