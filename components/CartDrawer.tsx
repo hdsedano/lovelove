@@ -3,6 +3,7 @@ import React from 'react';
 import { X, Minus, Plus, ShoppingBag, Heart, Send } from 'lucide-react';
 import { Language, CartItem } from '../types';
 import { translations } from '../translations';
+import { WHATSAPP_NUMBER } from '../constants';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -26,9 +27,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, lang, items, o
     const totalText = `*TOTAL: $${subtotal.toFixed(2)}*`;
     const fullMessage = `${t.whatsappMessage}\n\n${itemsList}\n\n${totalText}\n\nEs tan sencillo por siempre amor.`;
     
-    // Reemplaza con tu número de teléfono real (incluyendo código de país sin el +)
-    const phoneNumber = "34600000000"; 
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(fullMessage)}`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(fullMessage)}`;
     
     window.open(whatsappUrl, '_blank');
   };

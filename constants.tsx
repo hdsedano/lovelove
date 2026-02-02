@@ -1,6 +1,9 @@
 
 import { Product } from './types';
 
+// CAMBIA ESTE NÚMERO: Incluye el código de país sin el símbolo + (ejemplo: 34 para España, 52 para México)
+export const WHATSAPP_NUMBER = "34600000000"; 
+
 export const PRODUCTS: Product[] = [
   {
     id: '1',
