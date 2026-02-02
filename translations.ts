@@ -19,7 +19,7 @@ export const translations = {
     footerInfo: "Proudly serving from lovelove.ink. Based on the philosophy of collective care.",
     rights: "All rights reserved to Love Love.",
     shippingInfo: "Worldwide shipping. Taxes calculated at checkout.",
-    whatsappMessage: "Hello Love Love! I want to complete my order with the following items:",
+    whatsappMessage: "Hello Love Love! ❤️ I want to complete my order with the following items:"
   },
   es: {
     mantra: "Es tan sencillo por siempre amor, para siempre amor",
@@ -40,6 +40,6 @@ export const translations = {
     footerInfo: "Serviendo orgullosamente desde lovelove.ink. Basado en la filosofía del cuidado colectivo.",
     rights: "Todos los derechos reservados a Love Love.",
     shippingInfo: "Envíos a todo el mundo. Tasas calculadas al finalizar.",
-    whatsappMessage: "¡Hola Love Love! Quiero completar mi pedido con los siguientes artículos:",
+    whatsappMessage: "¡Hola Love Love! ❤️ Quiero completar mi pedido con los siguientes artículos:"
   }
 };
