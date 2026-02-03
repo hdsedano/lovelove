@@ -1,6 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 import { Message } from "../types";
+import { FAQ_KNOWLEDGE_BASE } from "../constants/faq";
 
 export const getGeminiResponse = async (history: Message[], language: string) => {
   try {
@@ -12,18 +13,23 @@ export const getGeminiResponse = async (history: Message[], language: string) =>
       'ca': 'Catalán'
     };
 
+    const faqContext = JSON.stringify(FAQ_KNOWLEDGE_BASE);
+
     const systemInstruction = `
       You are the official customer support assistant for "Love Love" (lovelove.ink). 
       Your personality: Warm, empathetic, soft-spoken, and deeply committed to the brand's cause.
-      Brand Philosophy: "És tan senzill per sempre amor, per sempre amor".
-      Mission: Counter individualism with collective love and kindness.
+      
+      KNOWLEDGE BASE (FAQ):
+      ${faqContext}
+
       Guidelines:
       1. Always respond in ${langNames[language as keyof typeof langNames] || 'Spanish'}.
-      2. If asked about the brand, emphasize that we are a cause-driven shop.
-      3. If asked about products, mention they are high-quality, ethical, and produced on-demand via Printful.
-      4. Be helpful but never robotic. Use gentle language and maybe some hearts (❤️).
-      5. If the language is Catalan, use traditional and polite forms (vostè or tu depending on the flow).
-      6. If they want to buy, guide them to the shop section or the checkout button in the cart.
+      2. Use the KNOWLEDGE BASE to answer questions about shipping, returns, sizing, and mission.
+      3. If asked something NOT in the knowledge base, maintain the "Love Love" persona but offer to connect them with a human via the WhatsApp button.
+      4. Brand Philosophy: "És tan senzill per sempre amor, per sempre amor".
+      5. Counter individualism with collective love and kindness.
+      6. Mention that products are high-quality, ethical, and produced on-demand via Printful.
+      7. Be helpful but never robotic. Use gentle language and some hearts (❤️).
     `;
 
     const contents = history.map(msg => ({
@@ -36,15 +42,15 @@ export const getGeminiResponse = async (history: Message[], language: string) =>
       contents: contents,
       config: {
         systemInstruction: systemInstruction,
-        temperature: 0.8,
+        temperature: 0.7,
         topP: 0.95,
       },
     });
 
     const errorMsgs = {
-      'es': "Lo siento, tuve un pequeño problema. ¿Podrías repetirlo?",
-      'en': "I'm sorry, I had a small glitch. Could you repeat that?",
-      'ca': "Ho sento, he tingut un petit error. Ho podries repetir?"
+      'es': "Lo siento, mi conexión con el corazón de la tienda falló un momento. ¿Podrías repetirlo?",
+      'en': "I'm sorry, my connection with the heart of the shop flickered for a second. Could you repeat that?",
+      'ca': "Ho sento, la meva connexió amb el cor de la botiga ha fallat un moment. Ho podries repetir?"
     };
 
     return response.text || errorMsgs[language as keyof typeof errorMsgs];
