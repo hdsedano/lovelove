@@ -28,6 +28,7 @@ const Header: React.FC<HeaderProps> = ({ lang, setLang, cart, onCartToggle }) =>
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (isMobileMenuOpen) setIsMobileMenuOpen(false);
   };
 
   return (
@@ -42,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ lang, setLang, cart, onCartToggle }) =>
         </button>
 
         <a 
-          href="#" 
+          href="#top" 
           onClick={handleLogoClick}
           className="flex items-center space-x-3 group"
         >
