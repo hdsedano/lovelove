@@ -13,7 +13,7 @@ import { translations } from './translations';
 import { Instagram, Facebook, Mail, MapPin, Heart, Send, Sparkles, AlertCircle } from 'lucide-react';
 
 // URL de tu Script de Google (Paso 2 abajo)
-const GOOGLE_SHEETS_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI";
+const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzK20dlT3dbUlGN_I5hBKb2FTTleXXG9Mi6dm0Lm99Odqj1ikY2bZ7A8ddJhbv0BoBD/exec";
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('es');
