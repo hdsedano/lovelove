@@ -5,22 +5,21 @@ import { FAQ_KNOWLEDGE_BASE } from "../constants/faq";
 
 /**
  * Servicio de Inteligencia Artificial para Love Love.
- * Obtiene la respuesta de Gemini utilizando la API_KEY configurada en el entorno.
+ * La API_KEY se inyecta desde el entorno de Vercel.
  */
 export const getGeminiResponse = async (history: Message[], language: string) => {
-  // Acceso directo según requerimientos técnicos.
+  // Intentamos obtener la clave de la forma más directa posible
   const apiKey = process.env.API_KEY;
 
-  // Verificación de disponibilidad de la clave.
-  if (!apiKey || apiKey === "undefined" || apiKey === "" || apiKey === "null") {
-    console.warn("⚠️ Love Love Debug: API_KEY no detectada en process.env");
+  if (!apiKey || apiKey === "undefined" || apiKey === "null") {
+    console.warn("Love Love: API_KEY no encontrada. Verifica la configuración en Vercel.");
     return language === 'es' 
-      ? "Mi conexión todavía no está activa. Por favor, asegúrate de haber hecho 'Redeploy' en Vercel después de guardar la variable API_KEY. ❤️"
-      : "My connection is not active yet. Please make sure you have performed a 'Redeploy' in Vercel after saving the API_KEY variable. ❤️";
+      ? "Mi conexión con el servidor de amor todavía no está activa. Por favor, realiza un 'Redeploy' en Vercel para activar mi corazón. ❤️"
+      : "My connection to the love server is not active yet. Please perform a 'Redeploy' in Vercel to activate my heart. ❤️";
   }
 
   try {
-    // Inicialización siguiendo estrictamente la guía de Google GenAI SDK.
+    // Inicialización del cliente de IA
     const ai = new GoogleGenAI({ apiKey });
     
     const langNames = {
@@ -29,38 +28,38 @@ export const getGeminiResponse = async (history: Message[], language: string) =>
       'ca': 'Catalán'
     };
 
-    const faqContext = JSON.stringify(FAQ_KNOWLEDGE_BASE);
-
     const systemInstruction = `
       You are the official customer support assistant for "Love Love" (lovelove.ink). 
       Personality: Warm, empathetic, soft-spoken, and deeply committed to the brand's cause.
       
       KNOWLEDGE BASE:
-      ${faqContext}
+      ${JSON.stringify(FAQ_KNOWLEDGE_BASE)}
 
       Rules:
-      1. Always respond in ${langNames[language as keyof typeof langNames] || 'Spanish'}.
+      1. Always respond in ${langNames[language as keyof typeof langNames] || 'Español'}.
       2. Use the KNOWLEDGE BASE for shipping, returns, sizing, and mission.
       3. Philosophy: "És tan senzill per sempre amor, per sempre amor".
       4. If unsure, stay in character and offer WhatsApp contact.
       5. Counter individualism with collective love.
       6. Mention on-demand production via Printful.
-      7. Use gentle language and hearts (❤️).
+      7. Always use gentle language and hearts (❤️).
     `;
 
-    // Preparar el contenido asegurando que el primer mensaje sea del usuario (Requisito API)
-    let contents = history.map(msg => ({
-      role: msg.role === 'model' ? 'model' : 'user',
-      parts: [{ text: msg.text }]
-    }));
+    // Preparamos los mensajes asegurando el formato correcto (user -> model -> user)
+    const contents = history
+      .filter(m => m.text && m.text.trim() !== "")
+      .map(m => ({
+        role: m.role === 'model' ? 'model' as const : 'user' as const,
+        parts: [{ text: m.text }]
+      }));
 
-    // El historial debe empezar con 'user' para Gemini
-    const firstUserIdx = contents.findIndex(c => c.role === 'user');
-    if (firstUserIdx !== -1) {
-      contents = contents.slice(firstUserIdx);
-    } else {
-      // Si no hay mensajes de usuario, devolvemos un saludo genérico
-      return "¡Hola! Soy tu asistente de Love Love. ¿Cómo puedo ayudarte hoy? ❤️";
+    // Gemini requiere que el primer mensaje sea del 'user'
+    if (contents.length > 0 && contents[0].role === 'model') {
+      contents.shift();
+    }
+
+    if (contents.length === 0) {
+      return "¡Hola! ¿En qué puedo ayudarte hoy con Love Love? ❤️";
     }
 
     const response = await ai.models.generateContent({
@@ -69,25 +68,22 @@ export const getGeminiResponse = async (history: Message[], language: string) =>
       config: {
         systemInstruction: systemInstruction,
         temperature: 0.7,
+        topP: 0.95,
       },
     });
 
-    if (!response.text) {
-      throw new Error("No text response from API");
-    }
-
-    return response.text;
+    return response.text || "He sentido tu mensaje, pero no he podido encontrar las palabras. ¿Puedes repetirlo? ❤️";
 
   } catch (error: any) {
-    console.error("Gemini Error:", error);
+    console.error("Error en el servicio Gemini:", error);
     
-    // Manejo específico de errores de autenticación
+    // Errores comunes de clave
     if (error.status === 403 || error.status === 401 || error.message?.includes("key")) {
-      return "Hay un problema con la clave de acceso. Por favor, verifica que la API_KEY en Vercel sea correcta y no tenga espacios. ❤️";
+      return "La clave de acceso no parece válida. Por favor, verifica que copiaste el 'Key Value' correctamente en Vercel. ❤️";
     }
 
     return language === 'es' 
-      ? "Lo siento, he tenido un pequeño tropiezo al pensar. ¿Podrías preguntarme de nuevo? ❤️"
-      : "I'm sorry, I had a little trouble thinking. Could you ask me again? ❤️";
+      ? "Lo siento mucho, mi conexión ha tenido un pequeño tropiezo. ¿Podrías intentarlo de nuevo? ❤️"
+      : "I'm so sorry, my connection had a little stumble. Could you try again? ❤️";
   }
 };
