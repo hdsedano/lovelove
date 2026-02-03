@@ -4,8 +4,17 @@ import { Message } from "../types";
 import { FAQ_KNOWLEDGE_BASE } from "../constants/faq";
 
 export const getGeminiResponse = async (history: Message[], language: string) => {
+  const apiKey = process.env.API_KEY;
+
+  if (!apiKey || apiKey === "undefined") {
+    console.error("ERRORE: La API_KEY no está configurada en las variables de entorno.");
+    return language === 'es' 
+      ? "Parece que mi conexión no está configurada. Por favor, asegúrate de añadir la API_KEY en Vercel. ❤️"
+      : "It seems my connection is not configured. Please make sure to add the API_KEY in Vercel. ❤️";
+  }
+
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey });
     
     const langNames = {
       'es': 'Español',
@@ -25,26 +34,24 @@ export const getGeminiResponse = async (history: Message[], language: string) =>
       Guidelines:
       1. Always respond in ${langNames[language as keyof typeof langNames] || 'Spanish'}.
       2. Use the KNOWLEDGE BASE to answer questions about shipping, returns, sizing, and mission.
-      3. If asked something NOT in the knowledge base, maintain the "Love Love" persona but offer to connect them with a human via the WhatsApp button.
-      4. Brand Philosophy: "És tan senzill per sempre amor, per sempre amor".
+      3. Brand Philosophy: "És tan senzill per sempre amor, per sempre amor".
+      4. If asked something NOT in the knowledge base, maintain the "Love Love" persona but offer to connect them with a human via WhatsApp.
       5. Counter individualism with collective love and kindness.
-      6. Mention that products are high-quality, ethical, and produced on-demand via Printful.
+      6. Mention that products are high-quality and produced on-demand via Printful.
       7. Be helpful but never robotic. Use gentle language and some hearts (❤️).
     `;
 
-    // Gemini API requires the conversation to start with a 'user' message.
-    // We filter the history to ensure the first message is from the user.
+    // Ensure the conversation history starts with 'user' and alternates roles correctly.
     let contents = history.map(msg => ({
-      role: msg.role,
+      role: msg.role === 'model' ? 'model' : 'user',
       parts: [{ text: msg.text }]
     }));
 
     const firstUserIndex = contents.findIndex(c => c.role === 'user');
     if (firstUserIndex !== -1) {
       contents = contents.slice(firstUserIndex);
-    } else if (contents.length > 0) {
-      // Fallback: if no user message found (unlikely), ensure we don't send an invalid sequence
-      return "Lo siento, necesito que me hagas una pregunta para poder ayudarte. ❤️";
+    } else {
+      return "¡Hola! ¿En qué puedo ayudarte hoy? ❤️";
     }
 
     const response = await ai.models.generateContent({
@@ -57,20 +64,20 @@ export const getGeminiResponse = async (history: Message[], language: string) =>
       },
     });
 
-    const errorMsgs = {
-      'es': "Lo siento, mi conexión con el corazón de la tienda falló un momento. ¿Podrías repetirlo?",
-      'en': "I'm sorry, my connection with the heart of the shop flickered for a second. Could you repeat that?",
-      'ca': "Ho sento, la meva connexió amb el cor de la botiga ha fallat un moment. Ho podries repetir?"
-    };
+    if (!response.text) {
+      throw new Error("Empty response from Gemini API");
+    }
 
-    return response.text || errorMsgs[language as keyof typeof errorMsgs];
-  } catch (error) {
-    console.error("Gemini Error:", error);
+    return response.text;
+  } catch (error: any) {
+    // Log the specific error to the browser console for the developer to see
+    console.error("Detailed Gemini API Error:", error);
+    
     const failMsgs = {
-      'es': "Algo salió mal, pero mi corazón sigue contigo. Por favor, intenta de nuevo.",
-      'en': "Something went wrong, but our hearts are still with you. Please try again.",
-      'ca': "Alguna cosa ha anat malament, però el meu cor segueix amb tu. Si us plau, torna-ho a intentar."
+      'es': `Algo salió mal (Error: ${error.message || 'desconocido'}). Por favor, intenta de nuevo.`,
+      'en': `Something went wrong (Error: ${error.message || 'unknown'}). Please try again.`,
+      'ca': `Alguna cosa ha anat malament (Error: ${error.message || 'desconegut'}). Torna-ho a intentar.`
     };
-    return failMsgs[language as keyof typeof failMsgs];
+    return failMsgs[language as keyof typeof failMsgs] || failMsgs.es;
   }
 };
