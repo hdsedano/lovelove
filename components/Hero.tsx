@@ -11,11 +11,9 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
       <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: 'radial-gradient(#e5989b 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
       
       <div className="relative z-10 text-center px-4 max-w-4xl animate-fade-in">
-        <div className="inline-block mb-6 px-4 py-1.5 bg-white shadow-sm rounded-full border border-[#e5989b]/30">
-          <p className="font-script text-2xl md:text-3xl text-[#e5989b]">
-            &ldquo;{t.mantra}&rdquo;
-          </p>
-        </div>
+        <p className="font-script text-3xl md:text-4xl text-[#e5989b] mb-4 drop-shadow-sm">
+          &ldquo;{t.mantra}&rdquo;
+        </p>
         
         <h1 className="font-serif text-5xl md:text-7xl text-[#6d1a1d] font-black mb-8 leading-tight">
           {t.heroTitle}
