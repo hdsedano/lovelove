@@ -10,13 +10,14 @@ import CartDrawer from './components/CartDrawer';
 import { Language, Product, CartItem } from './types';
 import { PRODUCTS, BRAND_LOGO_URL } from './constants';
 import { translations } from './translations';
-import { Instagram, Facebook, Mail, MapPin } from 'lucide-react';
+import { Instagram, Facebook, Mail, MapPin, Heart } from 'lucide-react';
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('es');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [footerLogoError, setFooterLogoError] = useState(false);
   
   const t = translations[lang];
 
@@ -94,7 +95,18 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
           <div className="col-span-1 md:col-span-2 space-y-6">
             <div className="flex items-center justify-center md:justify-start space-x-3">
-              <img src={BRAND_LOGO_URL} alt="Love Love" className="h-10 w-auto object-contain" />
+              {!footerLogoError ? (
+                <img 
+                  src={BRAND_LOGO_URL} 
+                  alt="Love Love" 
+                  className="h-10 w-auto object-contain" 
+                  onError={() => setFooterLogoError(true)}
+                />
+              ) : (
+                <div className="w-10 h-10 bg-[#e5989b]/20 rounded-full flex items-center justify-center text-[#6d1a1d]">
+                  <Heart size={20} fill="currentColor" />
+                </div>
+              )}
               <span className="font-serif text-xl font-black text-[#6d1a1d]">Love Love</span>
             </div>
             <p className="text-[#6d1a1d]/60 max-w-sm mx-auto md:mx-0 leading-relaxed text-sm italic">
