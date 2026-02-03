@@ -32,10 +32,20 @@ export const getGeminiResponse = async (history: Message[], language: string) =>
       7. Be helpful but never robotic. Use gentle language and some hearts (❤️).
     `;
 
-    const contents = history.map(msg => ({
+    // Gemini API requires the conversation to start with a 'user' message.
+    // We filter the history to ensure the first message is from the user.
+    let contents = history.map(msg => ({
       role: msg.role,
       parts: [{ text: msg.text }]
     }));
+
+    const firstUserIndex = contents.findIndex(c => c.role === 'user');
+    if (firstUserIndex !== -1) {
+      contents = contents.slice(firstUserIndex);
+    } else if (contents.length > 0) {
+      // Fallback: if no user message found (unlikely), ensure we don't send an invalid sequence
+      return "Lo siento, necesito que me hagas una pregunta para poder ayudarte. ❤️";
+    }
 
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
