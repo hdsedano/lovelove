@@ -19,7 +19,12 @@ export const translations = {
     footerInfo: "Proudly serving from lovelove.ink. Based on the philosophy of collective care.",
     rights: "All rights reserved to Love Love.",
     shippingInfo: "Worldwide shipping. Taxes calculated at checkout.",
-    whatsappMessage: "Hello Love Love! ❤️ I want to complete my order with the following items:"
+    whatsappMessage: "Hello Love Love! ❤️ I want to complete my order with the following items:",
+    newsletterTitle: "Stay Connected",
+    newsletterSubtitle: "Receive news about our cause and new collections directly in your heart.",
+    newsletterPlaceholder: "Your email address",
+    newsletterButton: "I Want to Join",
+    newsletterSuccess: "Welcome to the family! We've felt your connection. ❤️"
   },
   es: {
     mantra: "Es tan sencillo por siempre amor, para siempre amor",
@@ -40,7 +45,12 @@ export const translations = {
     footerInfo: "Serviendo orgullosamente desde lovelove.ink. Basado en la filosofía del cuidado colectivo.",
     rights: "Todos los derechos reservados a Love Love.",
     shippingInfo: "Envíos a todo el mundo. Tasas calculadas al finalizar.",
-    whatsappMessage: "¡Hola Love Love! ❤️ Quiero completar mi pedido con los siguientes artículos:"
+    whatsappMessage: "¡Hola Love Love! ❤️ Quiero completar mi pedido con los siguientes artículos:",
+    newsletterTitle: "Mantengamos la conexión",
+    newsletterSubtitle: "Recibe noticias de nuestra causa y nuevas colecciones directamente en tu corazón.",
+    newsletterPlaceholder: "Tu correo electrónico",
+    newsletterButton: "Quiero Unirme",
+    newsletterSuccess: "¡Bienvenido/a a la familia! Hemos sentido tu conexión. ❤️"
   },
   ca: {
     mantra: "És tan senzill per sempre amor, per sempre amor",
@@ -61,6 +71,11 @@ export const translations = {
     footerInfo: "Servint orgullosament des de lovelove.ink. Basat en la filosofia de la cura col·lectiva.",
     rights: "Tots els drets reservats a Love Love.",
     shippingInfo: "Enviaments a tot el món. Taxes calculades al finalitzar.",
-    whatsappMessage: "Hola Love Love! ❤️ Vull completar la meva comanda amb els següents articles:"
+    whatsappMessage: "Hola Love Love! ❤️ Vull completar la meva comanda amb els següents articles:",
+    newsletterTitle: "Mantinguem la connexió",
+    newsletterSubtitle: "Rep notícies de la nostra causa i noves col·leccions directament al teu cor.",
+    newsletterPlaceholder: "El teu correu electrònic",
+    newsletterButton: "Vull Unir-me",
+    newsletterSuccess: "Benvingut/da a la família! Hem sentit la teva connexió. ❤️"
   }
 };
