@@ -41,5 +41,26 @@ export const translations = {
     rights: "Todos los derechos reservados a Love Love.",
     shippingInfo: "Envíos a todo el mundo. Tasas calculadas al finalizar.",
     whatsappMessage: "¡Hola Love Love! ❤️ Quiero completar mi pedido con los siguientes artículos:"
+  },
+  ca: {
+    mantra: "És tan senzill per sempre amor, per sempre amor",
+    heroTitle: "Uneix-te a la Revolució de l'Amor",
+    heroSubtitle: "A Love Love, creiem en tractar-nos amb més cor i menys individualisme. Cada peça és una crida a una causa.",
+    shopNow: "Compra la Col·lecció",
+    ourCause: "La Nostra Causa",
+    causeText: "Love Love no és només una botiga. És una declaració contra l'aïllament de l'individualisme modern. Utilitzem producció ètica per difondre un missatge de connexió i tendresa.",
+    featuredProducts: "Peça per al Cor",
+    addToCart: "Afegir al Cor",
+    viewCart: "La Teva Selecció",
+    total: "Total",
+    checkout: "Finalitzar Comanda per WhatsApp",
+    cartEmpty: "La teva caixa d'amor està buida.",
+    contactSupport: "Parla amb nosaltres",
+    chatPlaceholder: "Com podem ajudar a difondre amor avui?",
+    language: "Idioma",
+    footerInfo: "Servint orgullosament des de lovelove.ink. Basat en la filosofia de la cura col·lectiva.",
+    rights: "Tots els drets reservats a Love Love.",
+    shippingInfo: "Enviaments a tot el món. Taxes calculades al finalitzar.",
+    whatsappMessage: "Hola Love Love! ❤️ Vull completar la meva comanda amb els següents articles:"
   }
 };

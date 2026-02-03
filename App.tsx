@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import ProductCard from './components/ProductCard';
+import ProductModal from './components/ProductModal';
 import MissionSection from './components/MissionSection';
 import ChatWidget from './components/ChatWidget';
 import CartDrawer from './components/CartDrawer';
@@ -15,6 +16,8 @@ const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('es');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  
   const t = translations[lang];
 
   useEffect(() => {
@@ -78,6 +81,7 @@ const App: React.FC = () => {
                 product={product} 
                 lang={lang} 
                 onAddToCart={addToCart} 
+                onViewProduct={setSelectedProduct}
               />
             ))}
           </div>
@@ -94,7 +98,7 @@ const App: React.FC = () => {
               <span className="font-serif text-xl font-black text-[#6d1a1d]">Love Love</span>
             </div>
             <p className="text-[#6d1a1d]/60 max-w-sm mx-auto md:mx-0 leading-relaxed text-sm italic">
-              "Es tan sencillo por siempre amor, para siempre amor"
+              "{t.mantra}"
             </p>
             <div className="flex justify-center md:justify-start space-x-6 text-[#6d1a1d]/40 mt-4">
               <Instagram className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} />
@@ -104,7 +108,7 @@ const App: React.FC = () => {
           </div>
           
           <div>
-            <h4 className="font-bold text-[#6d1a1d] uppercase tracking-widest text-xs mb-6">{lang === 'en' ? 'Explore' : 'Explorar'}</h4>
+            <h4 className="font-bold text-[#6d1a1d] uppercase tracking-widest text-xs mb-6">{lang === 'en' ? 'Explore' : (lang === 'ca' ? 'Explorar' : 'Explorar')}</h4>
             <ul className="space-y-4 text-sm text-[#6d1a1d]/70">
               <li><a href="#shop" className="hover:text-[#e5989b] transition-colors">{t.shopNow}</a></li>
               <li><a href="#cause" className="hover:text-[#e5989b] transition-colors">{t.ourCause}</a></li>
@@ -112,7 +116,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-bold text-[#6d1a1d] uppercase tracking-widest text-xs mb-6">{lang === 'en' ? 'Contact' : 'Contacto'}</h4>
+            <h4 className="font-bold text-[#6d1a1d] uppercase tracking-widest text-xs mb-6">{lang === 'en' ? 'Contact' : (lang === 'ca' ? 'Contacte' : 'Contacto')}</h4>
             <div className="flex items-center justify-center md:justify-start space-x-3 text-sm text-[#6d1a1d]/70">
               <MapPin size={18} className="text-[#e5989b]" />
               <p>lovelove.ink</p>
@@ -132,6 +136,15 @@ const App: React.FC = () => {
         onUpdateQuantity={updateQuantity}
         onRemove={removeProduct}
       />
+      
+      <ProductModal 
+        isOpen={!!selectedProduct} 
+        product={selectedProduct} 
+        onClose={() => setSelectedProduct(null)} 
+        lang={lang} 
+        onAddToCart={addToCart} 
+      />
+
       <ChatWidget lang={lang} />
     </div>
   );
