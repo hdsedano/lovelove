@@ -25,6 +25,11 @@ const Header: React.FC<HeaderProps> = ({ lang, setLang, cart, onCartToggle }) =>
     else setLang('en');
   };
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-[#fdfaf7]/95 backdrop-blur-md border-b border-[#e5989b]/20">
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
@@ -36,7 +41,11 @@ const Header: React.FC<HeaderProps> = ({ lang, setLang, cart, onCartToggle }) =>
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        <a href="/" className="flex items-center space-x-3 group" onClick={(e) => { e.preventDefault(); window.scrollTo({top: 0, behavior: 'smooth'}); }}>
+        <a 
+          href="#" 
+          onClick={handleLogoClick}
+          className="flex items-center space-x-3 group"
+        >
           <div className="relative h-12 w-12 flex items-center justify-center">
             {!logoError ? (
               <img 
