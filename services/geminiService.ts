@@ -6,11 +6,11 @@ import { FAQ_KNOWLEDGE_BASE } from "../constants/faq";
 export const getGeminiResponse = async (history: Message[], language: string) => {
   const apiKey = process.env.API_KEY;
 
-  if (!apiKey || apiKey === "undefined") {
-    console.error("ERRORE: La API_KEY no está configurada en las variables de entorno.");
+  if (!apiKey || apiKey === "undefined" || apiKey === "") {
+    console.error("CONFIGURACIÓN NECESARIA: Falta la API_KEY. Consíguela gratis en https://aistudio.google.com/app/apikey");
     return language === 'es' 
-      ? "Parece que mi conexión no está configurada. Por favor, asegúrate de añadir la API_KEY en Vercel. ❤️"
-      : "It seems my connection is not configured. Please make sure to add the API_KEY in Vercel. ❤️";
+      ? "Todavía estoy terminando de conectar mi corazón. Por favor, asegúrate de añadir la API_KEY en los ajustes de Vercel y hacer un 'Redeploy'. ❤️"
+      : "I'm still connecting my heart. Please make sure to add the API_KEY in Vercel settings and trigger a 'Redeploy'. ❤️";
   }
 
   try {
@@ -70,7 +70,6 @@ export const getGeminiResponse = async (history: Message[], language: string) =>
 
     return response.text;
   } catch (error: any) {
-    // Log the specific error to the browser console for the developer to see
     console.error("Detailed Gemini API Error:", error);
     
     const failMsgs = {
