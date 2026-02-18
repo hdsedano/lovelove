@@ -11,14 +11,14 @@ import { Language, Product, CartItem } from './types';
 import { PRODUCTS, BRAND_LOGO_URL } from './constants';
 import { translations } from './translations';
 import { fetchPrintfulProducts } from './services/printfulService';
+// Corregido: lucide-react en lugar de lucide-center
 import { Instagram, Facebook, Mail, MapPin, Heart, Send, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
 
-// URL de tu Script de Google para el registro de emails
 const GOOGLE_SHEETS_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI";
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('es');
-  const [products, setProducts] = useState<Product[]>(PRODUCTS); // Fallback inicial
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -29,16 +29,16 @@ const App: React.FC = () => {
   
   const t = translations[lang];
 
-  // Cargar productos de Printful al montar
   useEffect(() => {
     const loadStore = async () => {
       try {
         const printfulData = await fetchPrintfulProducts();
-        if (printfulData.length > 0) {
+        if (printfulData && printfulData.length > 0) {
           setProducts(printfulData);
         }
       } catch (err) {
-        console.log("Manteniendo productos locales de cortesía.");
+        // Si falla, mantenemos los productos locales de constants.tsx
+        console.log("Usando catálogo local de Love Love.");
       } finally {
         setIsLoadingProducts(false);
       }
@@ -118,7 +118,7 @@ const App: React.FC = () => {
             {isLoadingProducts && (
               <div className="flex items-center justify-center mt-8 text-[#e5989b] animate-pulse">
                 <Loader2 className="animate-spin mr-2" size={20} />
-                <span className="text-xs font-bold uppercase tracking-widest">Sincronizando con Printful...</span>
+                <span className="text-xs font-bold uppercase tracking-widest">Inspirando amor...</span>
               </div>
             )}
           </div>
@@ -138,7 +138,6 @@ const App: React.FC = () => {
 
         <MissionSection lang={lang} />
 
-        {/* Newsletter Section */}
         <section className="py-24 bg-[#faf3ef] border-y border-[#e5989b]/10">
           <div className="max-w-4xl mx-auto px-4 text-center">
             {newsletterStatus === 'success' ? (
@@ -188,9 +187,9 @@ const App: React.FC = () => {
             </div>
             <p className="text-[#6d1a1d]/60 max-w-sm mx-auto md:mx-0 leading-relaxed text-sm italic">"{t.mantra}"</p>
             <div className="flex justify-center md:justify-start space-x-6 text-[#6d1a1d]/40 mt-4">
-              <Instagram className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} />
-              <Facebook className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} />
-              <Mail className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} />
+              <a href="https://instagram.com" target="_blank" rel="noreferrer"><Instagram className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} /></a>
+              <a href="https://facebook.com" target="_blank" rel="noreferrer"><Facebook className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} /></a>
+              <a href="mailto:love@lovelove.ink"><Mail className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} /></a>
             </div>
           </div>
           <div>

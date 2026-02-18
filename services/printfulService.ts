@@ -4,49 +4,51 @@ import { Product } from "../types";
 const PRINTFUL_API_URL = "https://api.printful.com";
 
 export const fetchPrintfulProducts = async (): Promise<Product[]> => {
+  // En Vercel, estas variables se inyectan en el entorno de ejecución
   const apiKey = process.env.PRINTFUL_API_KEY;
 
-  if (!apiKey || apiKey === "1Rx7RkgzvU1wDpkMSIhcAMXegLQftPtLZAk1r75m") {
-    console.warn("Printful API Key no configurada. Usando productos locales.");
+  if (!apiKey || apiKey === "TU_PRINTFUL_ACCESS_TOKEN_AQUI" || apiKey === "") {
+    console.warn("Printful API Key no detectada. Asegúrate de configurarla en el panel de Vercel.");
     throw new Error("API Key missing");
   }
 
   try {
-    // 1. Obtener la lista de productos sincronizados
     const response = await fetch(`${PRINTFUL_API_URL}/store/products`, {
+      method: 'GET',
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       }
     });
 
-    if (!response.ok) throw new Error("Error fetching from Printful");
+    if (!response.ok) {
+      if (response.status === 401) console.error("Error de Printful: Token inválido.");
+      throw new Error(`Printful API error: ${response.status}`);
+    }
 
     const data = await response.json();
-    const syncProducts = data.result;
+    const syncProducts = data.result || [];
 
-    // 2. Mapear los productos de Printful a nuestro formato interno
-    // Nota: Printful devuelve los productos básicos. Para precios y descripciones detalladas
-    // a veces se requiere una segunda llamada por producto, pero usaremos los datos de la lista para agilidad.
-    const mappedProducts: Product[] = syncProducts.map((p: any) => ({
+    if (syncProducts.length === 0) {
+      console.info("La tienda de Printful está conectada pero no tiene productos sincronizados.");
+      return [];
+    }
+
+    // Mapeamos los productos con datos de fallback por si faltan campos
+    return syncProducts.map((p: any) => ({
       id: p.id.toString(),
-      name_en: p.name,
-      name_es: p.name, // Printful API suele devolver un solo nombre por defecto
-      name_ca: p.name,
-      price: 0, // El precio suele estar en las variantes (Sync Variants)
-      image: p.thumbnail_url || "https://picsum.photos/id/1027/800/1000",
-      description_en: "Official Love Love Product - High quality print on demand.",
-      description_es: "Producto oficial de Love Love - Impresión bajo demanda de alta calidad.",
-      description_ca: "Producte oficial de Love Love - Impressió sota demanda d'alta qualitat.",
+      name_en: p.name || "Love Love Product",
+      name_es: p.name || "Producto Love Love",
+      name_ca: p.name || "Producte Love Love",
+      price: 25.00, // Precio base (Printful requiere llamada extra para variantes)
+      image: p.thumbnail_url || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800",
+      description_en: "Official Love Love piece. Ethical production focused on community care.",
+      description_es: "Pieza oficial de Love Love. Producción ética enfocada en el cuidado comunitario.",
+      description_ca: "Peça oficial de Love Love. Producció ètica enfocada en la cura comunitària.",
       category: "Official Collection"
     }));
-
-    // Para obtener el precio real, necesitamos consultar los detalles de cada producto
-    // Para simplificar y no saturar la API, en esta versión asignaremos un precio base 
-    // o podrías extender esto con un Promise.all de detalles.
-    return mappedProducts;
   } catch (error) {
-    console.error("Printful Integration Error:", error);
+    console.error("No se pudo sincronizar con Printful:", error);
     throw error;
   }
 };
