@@ -6,7 +6,7 @@ const PRINTFUL_API_URL = "https://api.printful.com";
 export const fetchPrintfulProducts = async (): Promise<Product[]> => {
   const apiKey = process.env.PRINTFUL_API_KEY;
 
-  if (!apiKey || apiKey === "TU_PRINTFUL_ACCESS_TOKEN_AQUI") {
+  if (!apiKey || apiKey === "1Rx7RkgzvU1wDpkMSIhcAMXegLQftPtLZAk1r75m") {
     console.warn("Printful API Key no configurada. Usando productos locales.");
     throw new Error("API Key missing");
   }
