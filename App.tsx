@@ -1,58 +1,43 @@
-
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import ProductCard from './components/ProductCard';
-import ProductModal from './components/ProductModal';
-import MissionSection from './components/MissionSection';
-import ChatWidget from './components/ChatWidget';
+import { motion, useScroll, useSpring } from 'motion/react';
+import { MainNavigation } from './components/MainNavigation';
+import { NarrativeHero } from './components/NarrativeHero';
+import { NarrativeValues } from './components/NarrativeValues';
+import { DailyPractices } from './components/DailyPractices';
+import { SoulfulStore } from './components/SoulfulStore';
+import { CommunitySection } from './components/CommunitySection';
+import { HeartDaily } from './components/HeartDaily';
+import { RedesignedFooter } from './components/RedesignedFooter';
 import CartDrawer from './components/CartDrawer';
 import { Language, Product, CartItem } from './types';
-import { PRODUCTS, BRAND_LOGO_URL } from './constants';
-import { translations } from './translations';
-import { fetchPrintfulProducts } from './services/printfulService';
-// Corregido: lucide-react en lugar de lucide-center
-import { Instagram, Facebook, Mail, MapPin, Heart, Send, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
-
-const GOOGLE_SHEETS_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI";
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('es');
-  const [products, setProducts] = useState<Product[]>(PRODUCTS);
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [footerLogoError, setFooterLogoError] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   
-  const t = translations[lang];
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   useEffect(() => {
-    const loadStore = async () => {
-      try {
-        const printfulData = await fetchPrintfulProducts();
-        if (printfulData && printfulData.length > 0) {
-          setProducts(printfulData);
-        }
-      } catch (err) {
-        // Si falla, mantenemos los productos locales de constants.tsx
-        console.log("Usando catálogo local de Love Love.");
-      } finally {
-        setIsLoadingProducts(false);
-      }
-    };
-    loadStore();
-  }, []);
+    // Detect browser language
+    const browserLang = navigator.language.split('-')[0];
+    if (browserLang === 'en') {
+      setLang('en');
+    } else {
+      setLang('es');
+    }
 
-  useEffect(() => {
-    const saved = localStorage.getItem('lovelove_cart');
+    const saved = localStorage.getItem('lovelove_cart_redesign');
     if (saved) setCart(JSON.parse(saved));
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('lovelove_cart', JSON.stringify(cart));
+    localStorage.setItem('lovelove_cart_redesign', JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (product: Product) => {
@@ -80,138 +65,66 @@ const App: React.FC = () => {
     setCart(prev => prev.filter(item => item.id !== id));
   };
 
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newsletterEmail || newsletterStatus === 'loading') return;
-    setNewsletterStatus('loading');
-    try {
-      await fetch(GOOGLE_SHEETS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newsletterEmail, date: new Date().toLocaleString(), lang: lang }),
-      });
-      setNewsletterStatus('success');
-      setNewsletterEmail('');
-    } catch (error) {
-      if (GOOGLE_SHEETS_URL.includes("TU_URL")) {
-          setTimeout(() => setNewsletterStatus('success'), 1000);
-      } else {
-          setNewsletterStatus('error');
-      }
-    }
-  };
-
   return (
-    <div className="min-h-screen selection:bg-[#e5989b] selection:text-white bg-[#fdfaf7]">
-      <Header lang={lang} setLang={setLang} cart={cart} onCartToggle={() => setIsCartOpen(true)} />
+    <div className="min-h-screen bg-brand-offwhite font-sans text-brand-black">
+      {/* Premium Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[2px] bg-brand-rose origin-left z-[100]"
+        style={{ scaleX }}
+      />
 
-      <main>
-        <Hero lang={lang} />
-        
-        <section id="shop" className="py-24 max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl md:text-5xl font-black text-[#6d1a1d] mb-4">
-              {t.featuredProducts}
-            </h2>
-            <div className="w-24 h-1 bg-[#e5989b] mx-auto rounded-full"></div>
-            {isLoadingProducts && (
-              <div className="flex items-center justify-center mt-8 text-[#e5989b] animate-pulse">
-                <Loader2 className="animate-spin mr-2" size={20} />
-                <span className="text-xs font-bold uppercase tracking-widest">Inspirando amor...</span>
-              </div>
-            )}
-          </div>
-          
-          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 transition-opacity duration-500 ${isLoadingProducts ? 'opacity-50' : 'opacity-100'}`}>
-            {products.map(product => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                lang={lang} 
-                onAddToCart={addToCart} 
-                onViewProduct={setSelectedProduct}
-              />
-            ))}
-          </div>
+      <MainNavigation cartCount={cart.reduce((a, b) => a + b.quantity, 0)} onCartOpen={() => setIsCartOpen(true)} />
+
+      <main className="relative z-10">
+        <section id="hero">
+          <NarrativeHero lang={lang} />
         </section>
 
-        <MissionSection lang={lang} />
+        <section id="explore">
+          <NarrativeValues lang={lang} />
+        </section>
 
-        <section className="py-24 bg-[#faf3ef] border-y border-[#e5989b]/10">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            {newsletterStatus === 'success' ? (
-              <div className="animate-fade-in py-12">
-                <div className="w-20 h-20 bg-[#6d1a1d] rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
-                  <Heart className="text-white fill-current animate-pulse" size={32} />
-                </div>
-                <h3 className="font-serif text-3xl font-black text-[#6d1a1d] mb-4">{t.newsletterSuccess}</h3>
-              </div>
-            ) : (
-              <div className="space-y-8">
-                <div className="flex items-center justify-center space-x-2 text-[#e5989b]">
-                  <Sparkles size={20} /><span className="font-bold uppercase tracking-[0.3em] text-xs">COMUNIDAD</span><Sparkles size={20} />
-                </div>
-                <h2 className="font-serif text-4xl md:text-5xl font-black text-[#6d1a1d]">{t.newsletterTitle}</h2>
-                <p className="text-[#6d1a1d]/70 text-lg md:text-xl font-light max-w-2xl mx-auto italic">"{t.newsletterSubtitle}"</p>
-                <form onSubmit={handleNewsletterSubmit} className="max-w-md mx-auto relative group">
-                  <input 
-                    type="email" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)}
-                    placeholder={t.newsletterPlaceholder} required
-                    className="w-full pl-8 pr-44 py-5 bg-white border border-[#e5989b]/30 rounded-full focus:outline-none focus:ring-4 focus:ring-[#e5989b]/20 transition-all shadow-sm group-hover:shadow-md text-[#6d1a1d]"
-                  />
-                  <button 
-                    type="submit" disabled={newsletterStatus === 'loading'}
-                    className="absolute right-2 top-2 bottom-2 px-6 bg-[#6d1a1d] text-white rounded-full font-bold uppercase tracking-widest text-[11px] hover:bg-[#a32a2e] transition-all disabled:opacity-50 flex items-center space-x-2"
-                  >
-                    {newsletterStatus === 'loading' ? <Loader2 className="w-4 h-4 animate-spin" /> : <><span className="hidden sm:inline">{t.newsletterButton}</span><Send size={12} /></>}
-                  </button>
-                </form>
-                {newsletterStatus === 'error' && (
-                  <div className="flex items-center justify-center space-x-2 text-red-500 text-sm mt-4 animate-fade-in">
-                    <AlertCircle size={16} /><span>Algo ha fallado. Inténtalo de nuevo.</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+        <section id="practices">
+          <DailyPractices lang={lang} />
+        </section>
+
+        <section id="join">
+          <CommunitySection lang={lang} />
+        </section>
+
+        <section id="collection">
+          <SoulfulStore onAddToCart={addToCart} lang={lang} />
+        </section>
+
+        <section id="heart">
+          <HeartDaily lang={lang} />
+        </section>
+
+        <section className="py-48 px-6 flex flex-col items-center justify-center text-center bg-brand-offwhite">
+           <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+             transition={{ duration: 2 }}
+            className="space-y-8"
+           >
+             <p className="font-display text-3xl md:text-5xl text-brand-red italic max-w-4xl mx-auto leading-tight">
+              &ldquo;{lang === 'en' ? "It's so simple, forever love, for always love." : "Es tan sencillo, por siempre amor, para siempre amor."}&rdquo;
+             </p>
+             <div className="w-12 h-[1px] bg-brand-red/20 mx-auto" />
+           </motion.div>
         </section>
       </main>
 
-      <footer className="bg-white border-t border-[#e5989b]/10 py-16">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
-          <div className="col-span-1 md:col-span-2 space-y-6">
-            <div className="flex items-center justify-center md:justify-start space-x-3">
-              {!footerLogoError ? <img src={BRAND_LOGO_URL} alt="Love Love" className="h-10 w-auto object-contain" onError={() => setFooterLogoError(true)} /> : <div className="w-10 h-10 bg-[#e5989b]/20 rounded-full flex items-center justify-center text-[#6d1a1d]"><Heart size={20} fill="currentColor" /></div>}
-              <span className="font-serif text-xl font-black text-[#6d1a1d]">Love Love</span>
-            </div>
-            <p className="text-[#6d1a1d]/60 max-w-sm mx-auto md:mx-0 leading-relaxed text-sm italic">"{t.mantra}"</p>
-            <div className="flex justify-center md:justify-start space-x-6 text-[#6d1a1d]/40 mt-4">
-              <a href="https://instagram.com" target="_blank" rel="noreferrer"><Instagram className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} /></a>
-              <a href="https://facebook.com" target="_blank" rel="noreferrer"><Facebook className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} /></a>
-              <a href="mailto:love@lovelove.ink"><Mail className="hover:text-[#e5989b] cursor-pointer transition-colors" size={20} /></a>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-bold text-[#6d1a1d] uppercase tracking-widest text-xs mb-6">Explorar</h4>
-            <ul className="space-y-4 text-sm text-[#6d1a1d]/70">
-              <li><a href="#shop" className="hover:text-[#e5989b] transition-colors">{t.shopNow}</a></li>
-              <li><a href="#cause" className="hover:text-[#e5989b] transition-colors">{t.ourCause}</a></li>
-            </ul>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-bold text-[#6d1a1d] uppercase tracking-widest text-xs mb-6">Contacto</h4>
-            <div className="flex items-center justify-center md:justify-start space-x-3 text-sm text-[#6d1a1d]/70">
-              <MapPin size={18} className="text-[#e5989b]" /><p>lovelove.ink</p>
-            </div>
-            <p className="text-[10px] text-[#6d1a1d]/40 mt-8">© {new Date().getFullYear()} {t.rights}</p>
-          </div>
-        </div>
-      </footer>
+      <RedesignedFooter lang={lang} />
 
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} lang={lang} items={cart} onUpdateQuantity={updateQuantity} onRemove={removeProduct} />
-      <ProductModal isOpen={!!selectedProduct} product={selectedProduct} onClose={() => setSelectedProduct(null)} lang={lang} onAddToCart={addToCart} />
-      <ChatWidget lang={lang} />
+      <CartDrawer 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        lang={lang} 
+        items={cart} 
+        onUpdateQuantity={updateQuantity} 
+        onRemove={removeProduct} 
+      />
     </div>
   );
 };

@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brand-offwhite text-brand-black font-sans antialiased selection:bg-brand-rose selection:text-white;
+  }
+}
+
+@layer utilities {
+  .font-serif-italic {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+  }
+}

@@ -7,7 +7,7 @@ export const fetchPrintfulProducts = async (): Promise<Product[]> => {
   // En Vercel, estas variables se inyectan en el entorno de ejecución
   const apiKey = process.env.PRINTFUL_API_KEY;
 
-  if (!apiKey || apiKey === "1Rx7RkgzvU1wDpkMSIhcAMXegLQftPtLZAk1r75m" || apiKey === "") {
+  if (!apiKey || apiKey === "TU_PRINTFUL_ACCESS_TOKEN_AQUI" || apiKey === "") {
     console.warn("Printful API Key no detectada. Asegúrate de configurarla en el panel de Vercel.");
     throw new Error("API Key missing");
   }

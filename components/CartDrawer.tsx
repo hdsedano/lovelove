@@ -1,8 +1,7 @@
-
 import React from 'react';
-import { X, Minus, Plus, ShoppingBag, Heart, Send } from 'lucide-react';
+import { motion } from 'motion/react';
+import { X, Minus, Plus, Heart, Send } from 'lucide-react';
 import { Language, CartItem } from '../types';
-import { translations } from '../translations';
 import { WHATSAPP_NUMBER } from '../constants';
 
 interface CartDrawerProps {
@@ -15,17 +14,16 @@ interface CartDrawerProps {
 }
 
 const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, lang, items, onUpdateQuantity, onRemove }) => {
-  const t = translations[lang];
   const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   const handleCheckout = () => {
     const itemsList = items.map(i => {
       const name = lang === 'en' ? i.name_en : i.name_es;
-      return `• ${i.quantity}x ${name} ($${(i.price * i.quantity).toFixed(2)})`;
+      return `• ${i.quantity}x ${name} (${(i.price * i.quantity).toFixed(2)}€)`;
     }).join('\n');
     
-    const totalText = `*TOTAL: $${subtotal.toFixed(2)}*`;
-    const fullMessage = `${t.whatsappMessage}\n\n${itemsList}\n\n${totalText}\n\nEs tan sencillo por siempre amor.`;
+    const totalText = `*TOTAL: ${subtotal.toFixed(2)}€*`;
+    const fullMessage = `Hola Love Love, he sentido estos objetos:\n\n${itemsList}\n\n${totalText}\n\nEs tan sencillo por siempre amor.`;
     
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(fullMessage)}`;
     
@@ -35,69 +33,66 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, lang, items, o
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex justify-end">
+    <div className="fixed inset-0 z-[100] flex justify-end overflow-hidden">
       {/* Overlay */}
-      <div 
-        className="absolute inset-0 bg-[#6d1a1d]/40 backdrop-blur-sm transition-opacity animate-fade-in" 
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-brand-red/10 backdrop-blur-sm" 
         onClick={onClose}
-      ></div>
+      />
       
       {/* Panel */}
-      <div className="relative w-full max-w-md bg-[#fdfaf7] h-full shadow-2xl flex flex-col transform transition-transform duration-500 ease-out">
-        <div className="p-6 border-b border-[#e5989b]/20 flex items-center justify-between bg-white">
-          <h2 className="font-serif text-2xl font-black text-[#6d1a1d] flex items-center">
-            <ShoppingBag className="mr-2 text-[#e5989b]" size={28} /> {t.viewCart}
-          </h2>
+      <motion.div 
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="relative w-full max-w-md bg-brand-offwhite h-full shadow-2xl flex flex-col border-l border-brand-sand/20"
+      >
+        <div className="p-8 border-b border-brand-sand/20 flex items-center justify-between">
+          <div className="space-y-1">
+            <h2 className="font-display text-2xl text-brand-red">Mi Selección</h2>
+            <p className="font-serif-italic text-brand-red/40 text-xs italic tracking-widest uppercase">Love Love</p>
+          </div>
           <button 
             onClick={onClose} 
-            className="p-2 hover:bg-[#e5989b]/10 rounded-full text-[#6d1a1d] transition-colors"
+            className="p-2 hover:bg-brand-red/5 rounded-full text-brand-red transition-all"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-8 space-y-10">
           {items.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
-              <div className="w-20 h-20 bg-[#e5989b]/10 rounded-full flex items-center justify-center">
-                <Heart size={40} className="text-[#e5989b]" />
-              </div>
-              <p className="text-[#6d1a1d] font-serif italic text-xl">{t.cartEmpty}</p>
+            <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-30">
+              <Heart size={32} className="text-brand-rose" />
+              <p className="text-brand-red font-serif-italic italic text-lg">Aún está vacío, como un lienzo por llenar.</p>
             </div>
           ) : (
             items.map(item => (
-              <div key={item.id} className="flex space-x-4 border-b border-[#e5989b]/10 pb-6 group">
-                <div className="relative overflow-hidden rounded-xl w-24 h-32 flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
-                  <img src={item.image} alt={item.name_en} className="w-full h-full object-cover" />
+              <div key={item.id} className="flex gap-6 group">
+                <div className="relative overflow-hidden rounded-sm w-20 h-24 flex-shrink-0 bg-brand-cream border border-brand-sand/10">
+                  <img src={item.image} alt={item.name_es} className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700" />
                 </div>
                 <div className="flex-1 flex flex-col justify-between py-1">
-                  <div>
-                    <h3 className="font-serif text-lg text-[#6d1a1d] leading-tight font-bold">
+                  <div className="space-y-1">
+                    <h3 className="font-display text-lg text-brand-red leading-tight">
                       {lang === 'en' ? item.name_en : item.name_es}
                     </h3>
-                    <p className="text-[#e5989b] font-black mt-1 text-sm">${item.price.toFixed(2)}</p>
+                    <p className="text-brand-red/40 font-serif-italic italic text-xs uppercase tracking-wider">{item.price}€</p>
                   </div>
                   <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center space-x-3 bg-white border border-[#e5989b]/20 px-3 py-1.5 rounded-full shadow-sm">
-                      <button 
-                        onClick={() => onUpdateQuantity(item.id, -1)} 
-                        className="text-[#6d1a1d] hover:text-[#e5989b] transition-colors p-1"
-                      >
-                        <Minus size={14} />
-                      </button>
-                      <span className="font-black text-sm min-w-[24px] text-center text-[#6d1a1d]">{item.quantity}</span>
-                      <button 
-                        onClick={() => onUpdateQuantity(item.id, 1)} 
-                        className="text-[#6d1a1d] hover:text-[#e5989b] transition-colors p-1"
-                      >
-                        <Plus size={14} />
-                      </button>
+                    <div className="flex items-center gap-4 bg-white/50 border border-brand-sand/20 px-3 py-1 rounded-full text-brand-red text-xs">
+                      <button onClick={() => onUpdateQuantity(item.id, -1)} className="hover:text-brand-rose transition-colors"><Minus size={12} /></button>
+                      <span className="font-medium min-w-[20px] text-center">{item.quantity}</span>
+                      <button onClick={() => onUpdateQuantity(item.id, 1)} className="hover:text-brand-rose transition-colors"><Plus size={12} /></button>
                     </div>
                     <button 
                       onClick={() => onRemove(item.id)} 
-                      className="text-[10px] text-red-400 hover:text-red-600 uppercase tracking-widest font-black transition-colors"
+                      className="text-[9px] text-brand-red/30 hover:text-brand-red uppercase tracking-widest font-bold transition-colors"
                     >
-                      {lang === 'en' ? 'Remove' : 'Eliminar'}
+                      Quitar
                     </button>
                   </div>
                 </div>
@@ -107,29 +102,28 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, lang, items, o
         </div>
 
         {items.length > 0 && (
-          <div className="p-8 bg-white border-t border-[#e5989b]/20 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
-            <div className="flex justify-between items-center mb-8">
-              <span className="text-lg font-serif italic text-[#6d1a1d]">{t.total}</span>
-              <div className="text-right">
-                <span className="text-3xl font-black text-[#6d1a1d] block">${subtotal.toFixed(2)}</span>
-                <span className="text-[10px] text-[#6d1a1d]/40 uppercase tracking-widest">USD</span>
+          <div className="p-8 bg-brand-cream border-t border-brand-sand/20">
+            <div className="flex justify-between items-end mb-8">
+              <div className="space-y-1">
+                <span className="text-xs uppercase tracking-[0.2em] font-bold text-brand-red/30">Subtotal</span>
+                <p className="font-serif-italic text-sm text-brand-red/60 italic">Envío calculado al finalizar</p>
               </div>
+              <span className="text-3xl font-display text-brand-red">{subtotal.toFixed(2)}€</span>
             </div>
             
             <button 
               onClick={handleCheckout}
-              className="w-full py-5 bg-[#6d1a1d] text-white rounded-2xl font-bold uppercase tracking-widest hover:bg-[#a32a2e] transition-all shadow-xl shadow-red-900/10 flex items-center justify-center space-x-3 group"
+              className="w-full py-5 bg-brand-red text-white rounded-full font-medium tracking-wide hover:shadow-xl hover:shadow-brand-red/10 transition-all duration-500 flex items-center justify-center gap-3 group"
             >
-              <span>{t.checkout}</span>
-              <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              <span>Continuar</span>
+              <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </button>
-            
-            <p className="text-center text-[10px] text-[#6d1a1d]/50 mt-5 uppercase tracking-[0.2em] leading-relaxed">
-              {t.shippingInfo}
+            <p className="text-center text-[10px] text-brand-red/30 mt-6 uppercase tracking-[0.2em] leading-relaxed italic">
+              Conexión humana en cada envío.
             </p>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };
