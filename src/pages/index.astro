@@ -1,0 +1,397 @@
+---
+const title = "Love Love";
+const description = "Es tan sencillo, por siempre amor, para siempre amor.";
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body { min-height: 100vh; background: #faf7f2; }
+
+      body {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        color: #2c1f0e;
+      }
+
+      /* PORTADA */
+      .portada {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 40px;
+        position: relative;
+        background: linear-gradient(160deg, #fdf8f0 0%, #faf4e8 40%, #f8efe0 100%);
+      }
+
+      .portada::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(210,160,80,0.09) 0%, transparent 70%);
+        pointer-events: none;
+      }
+
+      .frase-portada {
+        font-size: clamp(2.8rem, 6vw, 5rem);
+        font-weight: 300;
+        font-style: italic;
+        line-height: 1.25;
+        text-align: center;
+        color: #2c1f0e;
+        max-width: 760px;
+        opacity: 0;
+        animation: flotar 3s ease forwards;
+        animation-delay: 0.4s;
+        letter-spacing: 0.01em;
+      }
+
+      .frase-portada em {
+        font-style: normal;
+        color: #a06828;
+      }
+
+      .autoria {
+        margin-top: 28px;
+        font-size: 0.85rem;
+        letter-spacing: 0.25em;
+        color: #c4a882;
+        opacity: 0;
+        animation: flotar 2s ease forwards;
+        animation-delay: 1.8s;
+      }
+
+      .bajar {
+        position: absolute;
+        bottom: 48px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0;
+        animation: flotar 2s ease forwards;
+        animation-delay: 3s;
+        cursor: pointer;
+        border: none;
+        background: none;
+        color: #c4a882;
+        transition: color 0.3s;
+      }
+
+      .bajar:hover { color: #8a6840; }
+
+      .bajar svg { animation: pulsar 2.5s ease-in-out infinite; }
+
+      /* CONTENIDO */
+      .contenido {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 120px 40px 160px;
+      }
+
+      /* PÁRRAFOS */
+      p.cuerpo {
+        font-size: clamp(1.2rem, 2vw, 1.35rem);
+        font-weight: 300;
+        line-height: 2;
+        color: #4a3520;
+        margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.9s ease, transform 0.9s ease;
+      }
+
+      p.cuerpo.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      p.cuerpo.destacado {
+        color: #2c1f0e;
+        font-size: clamp(1.3rem, 2.5vw, 1.5rem);
+      }
+
+      /* CITA — la frase en medio de la historia */
+      .cita {
+        margin: 56px 0;
+        padding: 0 0 0 28px;
+        border-left: 2px solid rgba(160, 104, 40, 0.3);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1.2s ease, transform 1.2s ease;
+      }
+
+      .cita.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .cita p {
+        font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+        font-weight: 300;
+        font-style: italic;
+        line-height: 1.35;
+        color: #a06828;
+      }
+
+      /* PREGUNTA */
+      .pregunta {
+        margin-top: 72px;
+        padding-top: 48px;
+        border-top: 1px solid rgba(160, 104, 40, 0.2);
+        font-size: clamp(1.4rem, 3vw, 1.9rem);
+        font-style: italic;
+        color: #2c1f0e;
+        line-height: 1.5;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1.2s ease, transform 1.2s ease;
+      }
+
+      .pregunta.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* TRANSICIÓN */
+      .transicion {
+        margin-top: 80px;
+        padding-top: 64px;
+        border-top: 1px solid rgba(160, 104, 40, 0.15);
+        font-size: clamp(1.15rem, 2vw, 1.3rem);
+        font-style: italic;
+        font-weight: 300;
+        color: #7a5c38;
+        line-height: 1.8;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1s ease, transform 1s ease;
+      }
+
+      .transicion.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* RESONAR */
+      .resonar {
+        margin-top: 48px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1s ease, transform 1s ease;
+      }
+
+      .resonar.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .resonar-label {
+        font-size: 1.1rem;
+        color: #a06828;
+        font-style: italic;
+        font-weight: 300;
+        margin-bottom: 20px;
+      }
+
+      .resonar textarea {
+        width: 100%;
+        background: rgba(160, 104, 40, 0.04);
+        border: 1px solid rgba(160, 104, 40, 0.2);
+        border-radius: 2px;
+        color: #2c1f0e;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.2rem;
+        line-height: 1.8;
+        padding: 20px 24px;
+        resize: none;
+        height: 130px;
+        outline: none;
+        transition: border-color 0.4s;
+      }
+
+      .resonar textarea:focus {
+        border-color: rgba(160, 104, 40, 0.45);
+      }
+
+      .resonar textarea::placeholder {
+        color: #c4a882;
+        font-style: italic;
+      }
+
+      .resonar button {
+        margin-top: 16px;
+        background: transparent;
+        border: 1px solid rgba(160, 104, 40, 0.35);
+        color: #a06828;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1rem;
+        letter-spacing: 0.12em;
+        padding: 12px 40px;
+        cursor: pointer;
+        border-radius: 2px;
+        transition: all 0.4s;
+      }
+
+      .resonar button:hover {
+        background: rgba(160, 104, 40, 0.06);
+        border-color: rgba(160, 104, 40, 0.6);
+      }
+
+      .gracias {
+        display: none;
+        font-size: 1.05rem;
+        font-style: italic;
+        color: #a06828;
+        margin-top: 28px;
+      }
+
+      /* ANIMACIONES */
+      @keyframes flotar {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes pulsar {
+        0%, 100% { transform: translateY(0); opacity: 0.5; }
+        50% { transform: translateY(5px); opacity: 1; }
+      }
+
+      @media (max-width: 600px) {
+        .portada { padding: 40px 24px; }
+        .contenido { padding-left: 24px; padding-right: 24px; }
+      }
+	  .email-campo {
+  margin-top: 12px;
+}
+
+.email-campo input {
+  width: 100%;
+  background: rgba(160, 104, 40, 0.04);
+  border: 1px solid rgba(160, 104, 40, 0.2);
+  border-radius: 2px;
+  color: #2c1f0e;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  padding: 14px 24px;
+  outline: none;
+  transition: border-color 0.4s;
+}
+
+.email-campo input:focus {
+  border-color: rgba(160, 104, 40, 0.45);
+}
+
+.email-campo input::placeholder {
+  color: #c4a882;
+  font-style: italic;
+}
+    </style>
+  </head>
+  <body>
+
+    <!-- PORTADA -->
+    <section class="portada" id="portada">
+      <p class="frase-portada">
+        Es tan sencillo,<br/>
+        <em>por siempre amor,</em><br/>
+        <em>para siempre amor.</em>
+      </p>
+      <p class="autoria">— LES</p>
+      <button
+        class="bajar"
+        onclick="document.getElementById('historia').scrollIntoView({behavior:'smooth'})"
+        aria-label="Leer la historia"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 9l7 7 7-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </section>
+
+    <!-- HISTORIA Y REFLEXIÓN -->
+    <section id="historia">
+      <div class="contenido">
+
+        <p class="cuerpo destacado">Esta frase, pronunciada por mi Papá, hace más de 8 años, momentos antes de partir de este plano, me ha estado rondando la cabeza desde entonces.</p>
+
+        <p class="cuerpo">Mi padre no era una persona de este tipo de palabras o frases, para nada. Era una persona completamente pragmática, ateo, de pensamiento completamente racional. Dentro de su racionalidad, era muy generoso, siempre dispuesto a ayudar a los demás y defender a los débiles. Sobre todo puedo decir que su accionar era coherente con su forma de pensar.</p>
+
+        <p class="cuerpo">Era médico y cooperativista. Todos con los que interactuaba lo consideraban alguien de palabra y justo.</p>
+
+        <p class="cuerpo">De repente, en uno de los viajes que solía hacer con mi mamá, empezó a sentir unos dolores por distintas partes del cuerpo. Al llegar a Bogotá, le diagnosticaron un cáncer de próstata en etapa 4. Siendo médico sabía el sufrimiento que genera el desenlace de esta enfermedad y él no quería vivir esto.</p>
+
+        <p class="cuerpo">Cuando llegó el día, toda la familia vino a despedirse. Uno por uno pasamos por su habitación y hablamos con él. Luego nos reunimos alrededor, y fue en ese momento, mientras se alistaba todo para el procedimiento, que cantó:</p>
+
+        <div class="cita">
+          <p>Es tan sencillo,<br/>por siempre amor,<br/>para siempre amor.</p>
+        </div>
+
+        <p class="cuerpo destacado">No era como quien canta una canción, sino tal vez como quien canta un mantra. Sólo lanzó la frase, no hubo ninguna explicación. Para mí hubo sorpresa, no hubiese esperado nunca que mi papá pronunciara una frase como esta. Y ahora, a instantes de su partida, totalmente consciente de que ya se iba, después de haberse despedido de todos, nos estaba dejando un mensaje.</p>
+
+        <p class="cuerpo">Despedí a mi padre tomando su mano, como acompañándolo mientras atravesaba el puente entre la vida y la muerte.</p>
+
+        <p class="cuerpo">Desde entonces esta frase ha permanecido dando vueltas en mi mente, tratando de sentirla y vivirla. Creyendo que tal vez abre una nueva dimensión de la que no somos conscientes, y que sólo en instantes como esos, cuando sabemos que nada de lo material importa más, tenemos la capacidad de conectarnos con ella.</p>
+
+        <p class="pregunta">¿Y qué pasaría si lo logramos ver antes?</p>
+
+        <p class="transicion">Esta frase no nos dicta una verdad, sólo nos invita a emprender este viaje.</p>
+
+        <div class="resonar">
+  <p class="resonar-label">Si algo resonó en ti, puedes escribírmelo. Lo recibiré.</p>
+  <form action="https://formspree.io/f/xaqzyznw" method="POST">
+    <textarea
+      name="reflexion"
+      placeholder="Escribe lo que sientes..."
+    ></textarea>
+    <div class="email-campo">
+      <input
+        type="email"
+        name="email"
+        placeholder="Tu email, si quieres que te responda (opcional)"
+      />
+    </div>
+    <button type="submit">Dejar mi reflexión</button>
+  </form>
+  <p class="gracias" id="gracias">Gracias. Tu reflexión viaja con la frase.</p>
+</div>
+
+      </div>
+    </section>
+
+    <script>
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('p.cuerpo, .cita, .pregunta, .transicion, .resonar').forEach(el => {
+        observer.observe(el);
+      });
+
+      function enviar() {
+        const texto = document.querySelector('textarea').value.trim();
+        if (!texto) return;
+        document.querySelector('textarea').value = '';
+        document.querySelector('.resonar button').style.display = 'none';
+        document.getElementById('gracias').style.display = 'block';
+      }
+    </script>
+
+  </body>
+</html>

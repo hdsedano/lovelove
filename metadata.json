@@ -1,8 +1,0 @@
-{
-  "name": "Love_Love-Its_so_simple",
-  "description": "Love Love is a digital sanctuary and ethical brand. A modern, minimalist invitation to live with more connection, tenderness, and love in a fractured world.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
-}
